@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_save">Сохранить</string>
+    <string name="hint_add_task_text">Событие</string>
+    <string name="title_surname">Фамилия:</string>
+    <string name="title_name">Имя:</string>
+    <string name="title_patronymic_name">Отчество:</string>
+    <string name="title_educational_institution">Образовательное учреждение:</string>
+    <string name="title_email">Email:</string>
+    <string name="title_registration_button">Зарегистрироваться</string>
+    <string name="title_enter_surname">Введите фамилию</string>
+    <string name="title_enter_name">Введите имя</string>
+    <string name="title_enter_patronymic_name">Введите отчество</string>
+    <string name="title_enter_email">Введите email</string>
+    <string name="title_task_name">Название события:</string>
+    <string name="title_task_description">Описание события:</string>
+    <string name="hint_task_description">Описание</string>
+
+
+    <string-array name="type_array">
+        <item>Учебное</item>
+        <item>Рабочее</item>
+    </string-array>
+
+    <string-array name="urgency_array">
+        <item>Несрочное</item>
+        <item>Срочное</item>
+    </string-array>
+
+    <string-array name="shifting_array">
+        <item>Сдвигаемое</item>
+        <item>Несдвигаемое</item>
+    </string-array>
+</resources>
