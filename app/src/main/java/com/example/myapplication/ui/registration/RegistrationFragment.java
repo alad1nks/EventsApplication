@@ -22,6 +22,7 @@ public class RegistrationFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
         binding = FragmentRegistrationBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -37,6 +38,8 @@ public class RegistrationFragment extends Fragment {
                 view1 -> {
                     if (isValidEmail(binding.email.getText()) && !binding.editSurname.getText().toString().isEmpty() && !binding.editName.getText().toString().isEmpty()) {
                         sharedPreferences.logIn();
+                        sharedPreferences.saveName(binding.editName.getText().toString());
+                        sharedPreferences.saveSurname(binding.editSurname.getText().toString());
                         Navigation.findNavController(view1).navigate(R.id.action_navigation_registration_to_navigation_main);
                     }
                 }

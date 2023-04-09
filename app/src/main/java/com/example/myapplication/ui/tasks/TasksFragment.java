@@ -1,5 +1,9 @@
 package com.example.myapplication.ui.tasks;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +32,7 @@ public class TasksFragment extends Fragment {
     private ViewPager2 viewPager;
     private TabLayout tabLayout;
     private TasksViewModel tasksViewModel;
+    private BroadcastReceiver broadcastReceiver;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -81,11 +86,25 @@ public class TasksFragment extends Fragment {
                                         .build()
                         )
         );
+        startReceiver();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+        requireActivity().unregisterReceiver(broadcastReceiver);
+    }
+
+    public void startReceiver() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_TIME_TICK);
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                tasksViewModel.refresh();
+            }
+        };
+        requireActivity().registerReceiver(broadcastReceiver, intentFilter);
     }
 }

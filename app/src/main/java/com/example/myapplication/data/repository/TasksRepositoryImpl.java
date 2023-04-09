@@ -1,6 +1,7 @@
 package com.example.myapplication.data.repository;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
@@ -11,7 +12,7 @@ import com.example.myapplication.data.model.TaskData;
 import java.util.List;
 
 public class TasksRepositoryImpl {
-    private TasksDao tasksDao;
+    private final TasksDao tasksDao;
     private final LiveData<List<TaskData>> eduTasks;
     private final LiveData<List<TaskData>> workTasks;
 
@@ -37,6 +38,4 @@ public class TasksRepositoryImpl {
             );
         });
     }
-
-
 }

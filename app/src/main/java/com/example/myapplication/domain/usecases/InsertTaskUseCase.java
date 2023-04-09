@@ -13,6 +13,7 @@ import com.example.myapplication.domain.model.TaskDomain;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 public class InsertTaskUseCase {
     private final TasksRepositoryImpl repository;
@@ -36,8 +37,7 @@ public class InsertTaskUseCase {
         for (TaskData i : tasks) {
             Long start = i.getStartTime();
             Long finish = i.getFinishTime();
-            Long now = Calendar.getInstance().getTimeInMillis();
-            Log.d("times", start.toString() + " " + finish.toString() + " " + now.toString());
+            long now = Calendar.getInstance().getTimeInMillis();
             int tag;
             if (now <= start) {
                 tag = 0;
@@ -71,6 +71,13 @@ public class InsertTaskUseCase {
 
     public LiveData<List<TaskDomain>> getWorkTasks() {
         return workTasks;
+    }
+
+    public void refresh() {
+        eduTasks.postValue(convertDataToDomain(Objects.requireNonNull(eduTasksFromDatabase.getValue())));
+        if (workTasksFromDatabase.getValue() != null) {
+            workTasks.postValue(convertDataToDomain(workTasksFromDatabase.getValue()));
+        }
     }
 
 }

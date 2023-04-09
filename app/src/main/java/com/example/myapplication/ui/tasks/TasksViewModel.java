@@ -57,23 +57,6 @@ public class TasksViewModel extends AndroidViewModel {
     public LiveData<List<TaskUi>> getWorkTasks() {
         return workTasks;
     }
-    public LiveData<String> getTaskName() {
-        return taskName;
-    }
-    public LiveData<String> getTaskDescription() {
-        return taskDescription;
-    }
-    public LiveData<Integer> getTaskType() {
-        return taskType;
-    }
-    public LiveData<Integer> getTaskUrgency() {
-        return taskUrgency;
-    }
-    public LiveData<Integer> getTaskShifting() {
-        return taskShifting;
-    }
-
-
 
     public void setTaskName(String name) {
         taskName.setValue(name);
@@ -100,8 +83,6 @@ public class TasksViewModel extends AndroidViewModel {
         taskEnd.setValue(time);
     }
 
-
-
     public Boolean insertTask() {
         Long cur = Calendar.getInstance().getTimeInMillis();
         Long start = taskStart.getValue() + taskDate.getValue();
@@ -119,6 +100,10 @@ public class TasksViewModel extends AndroidViewModel {
             return true;
         }
         return false;
+    }
+
+    public void refresh() {
+        useCase.refresh();
     }
 
     private List<TaskUi> convertDomainToUi(List<TaskDomain> tasks) {

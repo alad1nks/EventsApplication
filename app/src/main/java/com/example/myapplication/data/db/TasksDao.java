@@ -12,7 +12,7 @@ import java.util.List;
 
 @Dao
 public interface TasksDao {
-    @Query("SELECT * FROM tasks ORDER BY done, startTime")
+    @Query("SELECT * FROM tasks WHERE type = 4")
     public LiveData<List<TaskData>> getTasks();
 
     @Query("SELECT * FROM tasks WHERE type = 0 ORDER BY startTime, finishTime")

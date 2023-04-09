@@ -14,10 +14,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
+import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentAddTaskBinding;
 import com.example.myapplication.ui.tasks.TasksAdapter;
 import com.example.myapplication.ui.tasks.TasksViewModel;
@@ -40,6 +42,7 @@ public class AddTaskFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         binding.exitButton.setOnClickListener(
                 view1 -> {
+                    tasksViewModel.refresh();
                     Navigation.findNavController(view1).popBackStack();
                 }
         );
