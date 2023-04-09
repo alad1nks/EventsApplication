@@ -36,6 +36,7 @@ public class NotificationsFragment extends Fragment {
         AppPreference sharedPreferences = new AppPreferenceImpl(requireContext());
         binding.userName.setText(sharedPreferences.getName());
         binding.userSurname.setText(sharedPreferences.getSurname());
+        binding.userUniversity.setText(sharedPreferences.getUniversity());
     }
 
     @Override

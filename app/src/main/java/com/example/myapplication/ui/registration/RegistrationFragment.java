@@ -26,7 +26,6 @@ public class RegistrationFragment extends Fragment {
         binding = FragmentRegistrationBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -36,17 +35,14 @@ public class RegistrationFragment extends Fragment {
         }
         binding.button.setOnClickListener(
                 view1 -> {
-                    if (isValidEmail(binding.email.getText()) && !binding.editSurname.getText().toString().isEmpty() && !binding.editName.getText().toString().isEmpty()) {
+                    if (!binding.editSurname.getText().toString().isEmpty() && !binding.editName.getText().toString().isEmpty()) {
                         sharedPreferences.logIn();
                         sharedPreferences.saveName(binding.editName.getText().toString());
                         sharedPreferences.saveSurname(binding.editSurname.getText().toString());
+                        sharedPreferences.saveUniversity(binding.university.getText().toString());
                         Navigation.findNavController(view1).navigate(R.id.action_navigation_registration_to_navigation_main);
                     }
                 }
         );
-    }
-
-    private boolean isValidEmail(CharSequence target) {
-        return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
     }
 }
