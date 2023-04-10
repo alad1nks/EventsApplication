@@ -29,7 +29,9 @@ public class TasksViewModel extends AndroidViewModel {
     private final MutableLiveData<Long> taskDate;
     private final MutableLiveData<Long> taskStart;
     private final MutableLiveData<Long> taskEnd;
-
+    private final MutableLiveData<Integer> filterTaskType;
+    private final MutableLiveData<Integer> filterTaskUrgency;
+    private final MutableLiveData<Integer> filterTaskShifting;
     private final LiveData<Integer> notificationId;
 
     public TasksViewModel(Application application) {
@@ -49,6 +51,9 @@ public class TasksViewModel extends AndroidViewModel {
         taskDate = new MutableLiveData<>();
         taskStart = new MutableLiveData<>();
         taskEnd = new MutableLiveData<>();
+        filterTaskType = new MutableLiveData<>();
+        filterTaskUrgency= new MutableLiveData<>();
+        filterTaskShifting= new MutableLiveData<>();
         notificationId = useCase.getNotificationId();
     }
 
@@ -92,6 +97,8 @@ public class TasksViewModel extends AndroidViewModel {
         long start = taskStart.getValue() + taskDate.getValue();
         long end = taskEnd.getValue() + taskDate.getValue();
         if (cur <= start && start <= end) {
+            Log.d("TAG", String.valueOf(cur) + " " + String.valueOf(start) + " " + String.valueOf(end));
+            Log.d("HOUR", taskStart.getValue().toString());
             useCase.insertTask(
                     taskName.getValue(),
                     taskDescription.getValue(),
@@ -101,12 +108,27 @@ public class TasksViewModel extends AndroidViewModel {
                     taskUrgency.getValue(),
                     taskShifting.getValue());
             return true;
+        } else {
+            Log.d("TAG", String.valueOf(cur) + " " + String.valueOf(start) + " " + String.valueOf(end));
+            Log.d("HOUR", taskStart.getValue().toString());
         }
         return false;
     }
 
     public void refresh() {
         useCase.refresh();
+    }
+
+    public void saveTasks() {
+        useCase.saveTasks();
+    }
+
+    public void uploadTasks(String file) {
+        useCase.uploadTasks(file);
+    }
+
+    public void clearNotification() {
+        useCase.clearNotification();
     }
 
     private List<TaskUi> convertDomainToUi(List<TaskDomain> tasks) {
@@ -131,7 +153,7 @@ public class TasksViewModel extends AndroidViewModel {
             shifting = R.drawable.empty;
             ans.add(
                     new TaskUi(
-                            t.getId(), t.getName(), tag, urgency, shifting
+                            t.getId(), t.getName(), t.getDescription(), tag, urgency, shifting
                     )
             );
         }

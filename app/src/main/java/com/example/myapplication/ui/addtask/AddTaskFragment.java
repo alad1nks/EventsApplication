@@ -8,20 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.CalendarView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
-import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentAddTaskBinding;
-import com.example.myapplication.ui.tasks.TasksAdapter;
 import com.example.myapplication.ui.tasks.TasksViewModel;
 
 import java.util.GregorianCalendar;
@@ -126,7 +121,6 @@ public class AddTaskFragment extends Fragment {
         binding.calendar.setOnDateChangeListener(
                 (c, y, m, d) -> {
                     tasksViewModel.setTaskDate(new GregorianCalendar(y,m,d).getTimeInMillis());
-                    Log.d("getDate", String.valueOf(new GregorianCalendar(y,m,d).getTimeInMillis()));
                 }
         );
         binding.pickerStart.setOnTimeChangedListener(
@@ -135,11 +129,14 @@ public class AddTaskFragment extends Fragment {
         binding.pickerEnd.setOnTimeChangedListener(
                 (v, h, m) -> tasksViewModel.setTaskEnd(h * 3600000L + m * 60000L)
         );
-        tasksViewModel.setTaskDate(binding.calendar.getDate() - binding.calendar.getDate() % 86400000);
+        long s = new GregorianCalendar(2023,4,3).getTimeInMillis();
+        Log.d("safgsa", String.valueOf(s));
+        assert getArguments() != null;
+        binding.editName.setText(getArguments().getString("name"));
+        binding.editDescription.setText(getArguments().getString("description"));
+        tasksViewModel.setTaskDate(binding.calendar.getDate() - (binding.calendar.getDate() + 10800000) % 86400000);
         tasksViewModel.setTaskStart(binding.pickerStart.getHour() * 3600000L + binding.pickerStart.getMinute() * 60000L);
         tasksViewModel.setTaskEnd(binding.pickerEnd.getHour() * 3600000L + binding.pickerEnd.getMinute() * 60000L);
-        tasksViewModel.setTaskName("");
-        tasksViewModel.setTaskDescription("");
     }
 
 }

@@ -36,4 +36,22 @@
         <item>Сдвигаемое</item>
         <item>Несдвигаемое</item>
     </string-array>
+
+    <string-array name="filter_type_array">
+        <item>Любое</item>
+        <item>Учебное</item>
+        <item>Рабочее</item>
+    </string-array>
+
+    <string-array name="filter_urgency_array">
+        <item>Любое</item>
+        <item>Несрочное</item>
+        <item>Срочное</item>
+    </string-array>
+
+    <string-array name="filter_shifting_array">
+        <item>Любое</item>
+        <item>Сдвигаемое</item>
+        <item>Несдвигаемое</item>
+    </string-array>
 </resources>

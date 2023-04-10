@@ -8,12 +8,14 @@ import java.util.Objects;
 public final class TaskUi{
     private final int id;
     private final String name;
+    private final String description;
     private final int tag;
     private final int urgency;
     private final int shifting;
 
-    public TaskUi(int id, String name, int tag, int urgency, int shifting) {
+    public TaskUi(int id, String name, String description, int tag, int urgency, int shifting) {
         this.id = id;
+        this.description = description;
         this.name = name;
         this.tag = tag;
         this.urgency = urgency;
@@ -25,6 +27,9 @@ public final class TaskUi{
     }
     public String getName() {
         return name;
+    }
+    public String getDescription() {
+        return description;
     }
     @DrawableRes public int getTag() {
         return tag;
@@ -43,6 +48,7 @@ public final class TaskUi{
         TaskUi taskUi = (TaskUi) o;
         return id == taskUi.id
                 && Objects.equals(name, taskUi.name)
+                && Objects.equals(description, taskUi.description)
                 && Objects.equals(tag, taskUi.tag)
                 && Objects.equals(urgency, taskUi.urgency)
                 && Objects.equals(shifting, taskUi.shifting);
@@ -50,7 +56,7 @@ public final class TaskUi{
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, tag, urgency, shifting);
+        return Objects.hash(id, name, description, tag, urgency, shifting);
     }
 
     @NonNull
