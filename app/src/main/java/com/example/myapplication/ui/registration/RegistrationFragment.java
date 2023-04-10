@@ -35,7 +35,7 @@ public class RegistrationFragment extends Fragment {
         }
         binding.button.setOnClickListener(
                 view1 -> {
-                    if (!binding.editSurname.getText().toString().isEmpty() && !binding.editName.getText().toString().isEmpty()) {
+                    if (!binding.editSurname.getText().toString().isEmpty() && !binding.editName.getText().toString().isEmpty() && !binding.university.getText().toString().isEmpty()) {
                         sharedPreferences.logIn();
                         sharedPreferences.saveName(binding.editName.getText().toString());
                         sharedPreferences.saveSurname(binding.editSurname.getText().toString());

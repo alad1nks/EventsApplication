@@ -33,6 +33,7 @@
         android:id="@+id/university"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxLength="30"
         android:hint="@string/hint_university"/>
     <Button
         android:id="@+id/button"

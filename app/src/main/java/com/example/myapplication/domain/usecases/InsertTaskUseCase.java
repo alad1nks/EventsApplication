@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.data.model.TaskData;
 import com.example.myapplication.data.repository.TasksRepositoryImpl;
@@ -21,7 +22,9 @@ public class InsertTaskUseCase {
     private final MediatorLiveData<List<TaskDomain>> workTasks;
     private final LiveData<List<TaskData>> eduTasksFromDatabase;
     private final LiveData<List<TaskData>> workTasksFromDatabase;
+    private final MutableLiveData<Integer> notificationId;
     public InsertTaskUseCase(Application application) {
+        notificationId = new MutableLiveData<>();
         repository = new TasksRepositoryImpl(application);
         eduTasksFromDatabase = repository.getEduTasks();
         eduTasks = new MediatorLiveData<>();
@@ -41,6 +44,9 @@ public class InsertTaskUseCase {
             int tag;
             if (now <= start) {
                 tag = 0;
+                if (start - now > 290000 && start - now < 310000) {
+                    notificationId.postValue(i.getId());
+                }
             } else if (now <= finish) {
                 tag = 1;
             } else {
@@ -71,6 +77,9 @@ public class InsertTaskUseCase {
 
     public LiveData<List<TaskDomain>> getWorkTasks() {
         return workTasks;
+    }
+    public LiveData<Integer> getNotificationId() {
+        return notificationId;
     }
 
     public void refresh() {

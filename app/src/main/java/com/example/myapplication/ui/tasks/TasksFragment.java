@@ -1,5 +1,8 @@
 package com.example.myapplication.ui.tasks;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
@@ -20,6 +24,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentTasksBinding;
 import com.google.android.material.tabs.TabLayout;
@@ -87,6 +92,39 @@ public class TasksFragment extends Fragment {
                         )
         );
         startReceiver();
+
+
+        NotificationManager mNotificationManager;
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(requireActivity().getApplicationContext(), "notify_001");
+        Intent ii = new Intent(requireActivity().getApplicationContext(), MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(requireActivity(), 0, ii, PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
+        bigText.setBigContentTitle("Важно!");
+        bigText.setSummaryText("Новое событие!");
+
+        mBuilder.setContentIntent(pendingIntent);
+        mBuilder.setSmallIcon(R.mipmap.ic_launcher_round);
+        mBuilder.setContentTitle("Новое событие");
+        mBuilder.setContentText("Запланированное событие через 5 минут!");
+        mBuilder.setStyle(bigText);
+
+        mNotificationManager =
+                (NotificationManager) requireActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        String channelId = "Your_channel_id";
+        NotificationChannel channel = new NotificationChannel(
+                channelId,
+                "Channel human readable title",
+                NotificationManager.IMPORTANCE_HIGH);
+        mNotificationManager.createNotificationChannel(channel);
+        mBuilder.setChannelId(channelId);
+
+        tasksViewModel.getNotificationId().observe(getViewLifecycleOwner(), notificationId -> {
+            mNotificationManager.notify(notificationId, mBuilder.build());
+        });
+
     }
 
     @Override

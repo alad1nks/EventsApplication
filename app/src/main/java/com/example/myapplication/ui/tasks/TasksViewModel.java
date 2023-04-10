@@ -19,8 +19,6 @@ import java.util.List;
 
 public class TasksViewModel extends AndroidViewModel {
     private final InsertTaskUseCase useCase;
-    private final LiveData<List<TaskDomain>> eduTasksFromDomain;
-    private final LiveData<List<TaskDomain>> workTasksFromDomain;
     private final MediatorLiveData<List<TaskUi>> eduTasks;
     private final MediatorLiveData<List<TaskUi>> workTasks;
     private final MutableLiveData<String> taskName;
@@ -32,11 +30,13 @@ public class TasksViewModel extends AndroidViewModel {
     private final MutableLiveData<Long> taskStart;
     private final MutableLiveData<Long> taskEnd;
 
+    private final LiveData<Integer> notificationId;
+
     public TasksViewModel(Application application) {
         super(application);
         useCase = new InsertTaskUseCase(application);
-        eduTasksFromDomain = useCase.getEduTasks();
-        workTasksFromDomain = useCase.getWorkTasks();
+        LiveData<List<TaskDomain>> eduTasksFromDomain = useCase.getEduTasks();
+        LiveData<List<TaskDomain>> workTasksFromDomain = useCase.getWorkTasks();
         eduTasks = new MediatorLiveData<>();
         workTasks = new MediatorLiveData<>();
         eduTasks.addSource(eduTasksFromDomain, taskDomain -> eduTasks.postValue(convertDomainToUi(taskDomain)));
@@ -49,6 +49,7 @@ public class TasksViewModel extends AndroidViewModel {
         taskDate = new MutableLiveData<>();
         taskStart = new MutableLiveData<>();
         taskEnd = new MutableLiveData<>();
+        notificationId = useCase.getNotificationId();
     }
 
     public LiveData<List<TaskUi>> getEduTasks() {
@@ -56,6 +57,9 @@ public class TasksViewModel extends AndroidViewModel {
     }
     public LiveData<List<TaskUi>> getWorkTasks() {
         return workTasks;
+    }
+    public LiveData<Integer> getNotificationId() {
+        return notificationId;
     }
 
     public void setTaskName(String name) {
@@ -84,10 +88,9 @@ public class TasksViewModel extends AndroidViewModel {
     }
 
     public Boolean insertTask() {
-        Long cur = Calendar.getInstance().getTimeInMillis();
-        Long start = taskStart.getValue() + taskDate.getValue();
-        Long end = taskEnd.getValue() + taskDate.getValue();
-        Log.d("insertTask", start.toString() + " " + end.toString() + " " + cur);
+        long cur = Calendar.getInstance().getTimeInMillis();
+        long start = taskStart.getValue() + taskDate.getValue();
+        long end = taskEnd.getValue() + taskDate.getValue();
         if (cur <= start && start <= end) {
             useCase.insertTask(
                     taskName.getValue(),
