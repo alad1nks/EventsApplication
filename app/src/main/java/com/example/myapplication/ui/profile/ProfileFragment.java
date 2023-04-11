@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.profile;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -41,8 +42,7 @@ public class ProfileFragment extends Fragment {
         tasksViewModel = new ViewModelProvider(requireActivity()).get(TasksViewModel.class);
 
         binding = FragmentProfileBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-        return root;
+        return binding.getRoot();
     }
 
     @Override
@@ -59,6 +59,7 @@ public class ProfileFragment extends Fragment {
 
                         Intent intent1 = result.getData();
 
+                        assert intent1 != null;
                         Uri uri = intent1.getData();
 
                         byte[] byteData = getBytes(requireActivity(), uri);
@@ -69,22 +70,20 @@ public class ProfileFragment extends Fragment {
                 });
 
 
-        binding.upload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!PermissionUtils.hasPermissions(requireActivity()))  {
-                    PermissionUtils.requestPermissions(requireActivity(), PERMISSION_STORAGE);
-                }
+        binding.upload.setOnClickListener( view1 -> {
+            if (!PermissionUtils.hasPermissions(requireActivity()))  {
+                PermissionUtils.requestPermissions(requireActivity(), PERMISSION_STORAGE);
+            }
+            if (PermissionUtils.hasPermissions(requireActivity()))  {
                 ChooseFile();
             }
         });
 
-        binding.save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!PermissionUtils.hasPermissions(requireActivity()))  {
-                    PermissionUtils.requestPermissions(requireActivity(), PERMISSION_STORAGE);
-                }
+        binding.save.setOnClickListener(view12 -> {
+            if (!PermissionUtils.hasPermissions(requireActivity()))  {
+                PermissionUtils.requestPermissions(requireActivity(), PERMISSION_STORAGE);
+            }
+            if (PermissionUtils.hasPermissions(requireActivity()))  {
                 tasksViewModel.saveTasks();
             }
         });
@@ -103,24 +102,24 @@ public class ProfileFragment extends Fragment {
             filePicker.launch(fileIntent);
         } catch (Exception ex) {
             Log.e("Error", ex.getMessage());
-            Toast.makeText(requireActivity(), ex.getMessage().toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(requireActivity(), ex.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
+    @SuppressLint("Recycle")
     byte[] getBytes(Context context, Uri uri) {
-        InputStream inputStream = null;
+        InputStream inputStream;
         try {
             inputStream = context.getContentResolver().openInputStream(uri);
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             int bufferSize = 1024;
             byte[] buffer = new byte[bufferSize];
-            int len = 0;
+            int len;
             while ((len = inputStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, len);
             }
             return outputStream.toByteArray();
         } catch (Exception ex) {
-            Log.e("Error", ex.getMessage().toString());
             Toast.makeText(context, "getBytes error:" + ex.getMessage(), Toast.LENGTH_LONG).show();
             return null;
         }

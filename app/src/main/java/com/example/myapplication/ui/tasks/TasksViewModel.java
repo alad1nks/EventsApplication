@@ -29,13 +29,15 @@ public class TasksViewModel extends AndroidViewModel {
     private final MutableLiveData<Long> taskDate;
     private final MutableLiveData<Long> taskStart;
     private final MutableLiveData<Long> taskEnd;
-    private final MutableLiveData<Integer> filterTaskType;
+    private final MutableLiveData<Integer> filterTaskTag;
     private final MutableLiveData<Integer> filterTaskUrgency;
     private final MutableLiveData<Integer> filterTaskShifting;
+    private final MutableLiveData<Long> filterCalendar;
     private final LiveData<Integer> notificationId;
 
     public TasksViewModel(Application application) {
         super(application);
+        long time = Calendar.getInstance().getTimeInMillis();
         useCase = new InsertTaskUseCase(application);
         LiveData<List<TaskDomain>> eduTasksFromDomain = useCase.getEduTasks();
         LiveData<List<TaskDomain>> workTasksFromDomain = useCase.getWorkTasks();
@@ -51,9 +53,10 @@ public class TasksViewModel extends AndroidViewModel {
         taskDate = new MutableLiveData<>();
         taskStart = new MutableLiveData<>();
         taskEnd = new MutableLiveData<>();
-        filterTaskType = new MutableLiveData<>();
-        filterTaskUrgency= new MutableLiveData<>();
-        filterTaskShifting= new MutableLiveData<>();
+        filterTaskTag = new MutableLiveData<>(0);
+        filterTaskUrgency = new MutableLiveData<>(0);
+        filterTaskShifting = new MutableLiveData<>(0);
+        filterCalendar = new MutableLiveData<>(time - (time + 10800000) % 86400000);
         notificationId = useCase.getNotificationId();
     }
 
@@ -65,6 +68,18 @@ public class TasksViewModel extends AndroidViewModel {
     }
     public LiveData<Integer> getNotificationId() {
         return notificationId;
+    }
+    public LiveData<Integer> getFilterTaskTag() {
+        return filterTaskTag;
+    }
+    public LiveData<Integer> getFilterTaskUrgency() {
+        return filterTaskUrgency;
+    }
+    public LiveData<Integer> getFilterTaskShifting() {
+        return filterTaskShifting;
+    }
+    public LiveData<Long> getFilterCalendar() {
+        return filterCalendar;
     }
 
     public void setTaskName(String name) {
@@ -91,30 +106,50 @@ public class TasksViewModel extends AndroidViewModel {
     public void setTaskEnd(Long time) {
         taskEnd.setValue(time);
     }
+    public void setFilterTaskTag(Integer pos) {
+        filterTaskTag.setValue(pos);
+    }
+    public void setFilterTaskUrgency(Integer pos) {
+        filterTaskUrgency.setValue(pos);
+    }
+    public void setFilterTaskShifting(Integer pos) {
+        filterTaskShifting.setValue(pos);
+    }
 
-    public Boolean insertTask() {
+    public void setFilterCalendar(Long date) {
+        filterCalendar.setValue(date);
+    }
+    public void setFilters() {
+        useCase.setFilterTaskTag(filterTaskTag.getValue());
+        useCase.setFilterTaskUrgency(filterTaskUrgency.getValue());
+        useCase.setFilterTaskShifting(filterTaskShifting.getValue());
+    }
+
+    public void setCalendar() {
+        useCase.setFilterCalendar(filterCalendar.getValue());
+    }
+
+    public int insertTask() {
         long cur = Calendar.getInstance().getTimeInMillis();
         long start = taskStart.getValue() + taskDate.getValue();
         long end = taskEnd.getValue() + taskDate.getValue();
-        if (cur <= start && start <= end) {
-            Log.d("TAG", String.valueOf(cur) + " " + String.valueOf(start) + " " + String.valueOf(end));
-            Log.d("HOUR", taskStart.getValue().toString());
+        String name = taskName.getValue();
+        if (name.isEmpty()) {
+            return 0;
+        } else if (cur <= start && start <= end) {
             useCase.insertTask(
-                    taskName.getValue(),
+                    name,
                     taskDescription.getValue(),
                     start,
                     end,
                     taskType.getValue(),
                     taskUrgency.getValue(),
                     taskShifting.getValue());
-            return true;
+            return 1;
         } else {
-            Log.d("TAG", String.valueOf(cur) + " " + String.valueOf(start) + " " + String.valueOf(end));
-            Log.d("HOUR", taskStart.getValue().toString());
+            return 2;
         }
-        return false;
     }
-
     public void refresh() {
         useCase.refresh();
     }

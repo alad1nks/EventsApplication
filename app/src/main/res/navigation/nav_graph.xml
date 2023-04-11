@@ -5,22 +5,6 @@
     android:id="@+id/nav_graph"
     app:startDestination="@+id/navigation_registration">
     <fragment
-        android:id="@+id/navigation_main"
-        android:name="com.example.myapplication.ui.MainFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_tasks" >
-        <action
-            android:id="@+id/action_navigation_main_to_navigation_add_task"
-            app:destination="@id/navigation_add_task" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/navigation_add_task"
-        android:name="com.example.myapplication.ui.addtask.AddTaskFragment"
-        android:label="Add Task"
-        tools:layout="@layout/fragment_add_task" />
-
-    <fragment
         android:id="@+id/navigation_registration"
         android:name="com.example.myapplication.ui.registration.RegistrationFragment"
         android:label="Add Task"
@@ -31,5 +15,39 @@
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true"/>
     </fragment>
+
+    <fragment
+        android:id="@+id/navigation_main"
+        android:name="com.example.myapplication.ui.MainFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_tasks" >
+        <action
+            android:id="@+id/action_navigation_main_to_navigation_add_task"
+            app:destination="@id/navigation_add_task" />
+        <action
+            android:id="@+id/action_navigation_main_to_navigation_filters"
+            app:destination="@id/navigation_filters" />
+        <action
+            android:id="@+id/action_navigation_main_to_navigation_calendar_filters"
+            app:destination="@id/navigation_calendar_filters" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_add_task"
+        android:name="com.example.myapplication.ui.addtask.AddTaskFragment"
+        android:label="Add Task"
+        tools:layout="@layout/fragment_add_task" />
+
+    <fragment
+        android:id="@+id/navigation_filters"
+        android:name="com.example.myapplication.ui.filters.FiltersFragment"
+        android:label="Filters"
+        tools:layout="@layout/fragment_filters" />
+
+    <fragment
+        android:id="@+id/navigation_calendar_filters"
+        android:name="com.example.myapplication.ui.filters.CalendarFiltersFragment"
+        android:label="Calendar Filters"
+        tools:layout="@layout/fragment_calendar_filter" />
 
 </navigation>

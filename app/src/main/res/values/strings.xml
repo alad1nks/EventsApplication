@@ -37,10 +37,11 @@
         <item>Несдвигаемое</item>
     </string-array>
 
-    <string-array name="filter_type_array">
+    <string-array name="filter_tag_array">
         <item>Любое</item>
-        <item>Учебное</item>
-        <item>Рабочее</item>
+        <item>Не начато</item>
+        <item>В работе</item>
+        <item>Завершено</item>
     </string-array>
 
     <string-array name="filter_urgency_array">

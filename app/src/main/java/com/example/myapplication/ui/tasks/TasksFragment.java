@@ -127,6 +127,35 @@ public class TasksFragment extends Fragment {
             tasksViewModel.clearNotification();
         });
 
+        binding.calendarButton.setOnClickListener(
+                view1 -> Navigation
+                        .findNavController(requireActivity(), R.id.nav_host_fragment_activity_main)
+                        .navigate(
+                                R.id.action_navigation_main_to_navigation_calendar_filters,
+                                bundle,
+                                new NavOptions.Builder()
+                                        .setEnterAnim(androidx.appcompat.R.anim.abc_slide_in_bottom)
+                                        .setExitAnim(androidx.appcompat.R.anim.abc_slide_out_top)
+                                        .setPopEnterAnim(androidx.appcompat.R.anim.abc_slide_in_top)
+                                        .setPopExitAnim(androidx.appcompat.R.anim.abc_slide_out_bottom)
+                                        .build()
+                        )
+        );
+
+        binding.filterButton.setOnClickListener(
+                view1 -> Navigation
+                        .findNavController(requireActivity(), R.id.nav_host_fragment_activity_main)
+                        .navigate(
+                                R.id.action_navigation_main_to_navigation_filters,
+                                bundle,
+                                new NavOptions.Builder()
+                                        .setEnterAnim(androidx.appcompat.R.anim.abc_slide_in_bottom)
+                                        .setExitAnim(androidx.appcompat.R.anim.abc_slide_out_top)
+                                        .setPopEnterAnim(androidx.appcompat.R.anim.abc_slide_in_top)
+                                        .setPopExitAnim(androidx.appcompat.R.anim.abc_slide_out_bottom)
+                                        .build()
+                        )
+        );
     }
 
     @Override

@@ -43,10 +43,13 @@ public class AddTaskFragment extends Fragment {
         );
         binding.saveText.setOnClickListener(
                 view1 -> {
-                    if (tasksViewModel.insertTask()) {
-                        Navigation.findNavController(view1).popBackStack();
-                    } else {
+                    int response = tasksViewModel.insertTask();
+                    if (response == 0) {
+                        Toast.makeText(getContext(), "Введите название события", Toast.LENGTH_LONG).show();
+                    } else if (response == 2) {
                         Toast.makeText(getContext(), "Некорректная дата", Toast.LENGTH_LONG).show();
+                    } else {
+                        Navigation.findNavController(view1).popBackStack();
                     }
                 }
         );

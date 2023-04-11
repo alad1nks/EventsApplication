@@ -35,26 +35,62 @@ public class InsertTaskUseCase {
     private final LiveData<List<TaskData>> eduTasksFromDatabase;
     private final LiveData<List<TaskData>> workTasksFromDatabase;
     private final MutableLiveData<Integer> notificationId;
+    private final MutableLiveData<Integer> filterTaskTag;
+    private final MutableLiveData<Integer> filterTaskUrgency;
+    private final MutableLiveData<Integer> filterTaskShifting;
+    private final MutableLiveData<Long> filterCalendar;
     private final Application application;
     public InsertTaskUseCase(Application application) {
         this.application = application;
+        long time = Calendar.getInstance().getTimeInMillis();
         notificationId = new MutableLiveData<>();
+        filterTaskTag = new MutableLiveData<>(0);
+        filterTaskUrgency = new MutableLiveData<>(0);
+        filterTaskShifting = new MutableLiveData<>(0);
+        filterCalendar = new MutableLiveData<>(time - (time + 10800000) % 86400000);
         repository = new TasksRepositoryImpl(application);
         eduTasksFromDatabase = repository.getEduTasks();
         eduTasks = new MediatorLiveData<>();
         workTasksFromDatabase = repository.getWorkTasks();
         workTasks = new MediatorLiveData<>();
         eduTasks.addSource(eduTasksFromDatabase, tasksData -> eduTasks.postValue(convertDataToDomain(tasksData)));
+        eduTasks.addSource(filterTaskShifting, filters -> {
+            if (eduTasksFromDatabase.getValue() != null) {
+                eduTasks.postValue(convertDataToDomain(eduTasksFromDatabase.getValue()));
+            }
+        });
+        eduTasks.addSource(filterCalendar, calendar -> {
+            if (eduTasksFromDatabase.getValue() != null) {
+                eduTasks.postValue(convertDataToDomain(eduTasksFromDatabase.getValue()));
+            }
+        });
         workTasks.addSource(workTasksFromDatabase, tasksData -> workTasks.postValue(convertDataToDomain(tasksData)));
+        workTasks.addSource(filterTaskShifting, tasksData -> {
+            if (workTasksFromDatabase.getValue() != null) {
+                workTasks.postValue(convertDataToDomain(workTasksFromDatabase.getValue()));
+            }
+        });
+        workTasks.addSource(filterCalendar, calendar -> {
+            if (workTasksFromDatabase.getValue() != null) {
+                workTasks.postValue(convertDataToDomain(workTasksFromDatabase.getValue()));
+            }
+        });
+
     }
 
     private List<TaskDomain> convertDataToDomain(List<TaskData> tasks) {
         List<TaskDomain> result1 = new ArrayList<>();
         List<TaskDomain> result2 = new ArrayList<>();
+        int filterUrgency = filterTaskUrgency.getValue();
+        int filterShifting = filterTaskShifting.getValue();
+        int filterTag = filterTaskTag.getValue();
+        long date = filterCalendar.getValue();
+        long now = Calendar.getInstance().getTimeInMillis();
         for (TaskData i : tasks) {
             Long start = i.getStartTime();
             Long finish = i.getFinishTime();
-            long now = Calendar.getInstance().getTimeInMillis();
+            int urgency = i.getUrgency();
+            int shifting = i.getShifting();
             int tag;
             if (now <= start) {
                 tag = 0;
@@ -66,16 +102,17 @@ public class InsertTaskUseCase {
             } else {
                 tag = 2;
             }
-            if (now <= finish) {
-                result1.add(new TaskDomain(
-                        i.getId(), i.getName(), i.getDescription(), start, finish, tag, i.getType(), i.getUrgency(), i.getShifting()
-                ));
-            } else {
-                result2.add(new TaskDomain(
-                        i.getId(), i.getName(), i.getDescription(), start, finish, tag, i.getType(), i.getUrgency(), i.getShifting()
-                ));
+            if ((start >= date && start <= date + 86400000) && (filterTag - 1 == tag || filterTag == 0) && (filterUrgency - 1 == urgency || filterUrgency == 0) && (filterShifting - 1 == shifting || filterShifting == 0)) {
+                if (now <= finish) {
+                    result1.add(new TaskDomain(
+                            i.getId(), i.getName(), i.getDescription(), start, finish, tag, i.getType(), i.getUrgency(), i.getShifting()
+                    ));
+                } else {
+                    result2.add(new TaskDomain(
+                            i.getId(), i.getName(), i.getDescription(), start, finish, tag, i.getType(), i.getUrgency(), i.getShifting()
+                    ));
+                }
             }
-
         }
         result1.addAll(result2);
         return result1;
@@ -103,6 +140,10 @@ public class InsertTaskUseCase {
         }
     }
 
+    public void clearNotification() {
+        notificationId.postValue(null);
+    }
+
     @SuppressLint("SimpleDateFormat")
     public void saveTasks() {
         StringBuilder response = new StringBuilder();
@@ -126,6 +167,7 @@ public class InsertTaskUseCase {
             throw new RuntimeException(e);
         }
     }
+
 
     public void uploadTasks(String file) {
         String name = null;
@@ -159,9 +201,9 @@ public class InsertTaskUseCase {
             }
             if (name != null && startTime != null && finishTime != null) {
                 if (description != null) {
-                    repository.insertTask(name, "", startTime, finishTime, 0, 0, 0);
-                } else {
                     repository.insertTask(name, description, startTime, finishTime, 0, 0, 0);
+                } else {
+                    repository.insertTask(name, "", startTime, finishTime, 0, 0, 0);
                 }
                 name = null;
                 description = null;
@@ -172,16 +214,25 @@ public class InsertTaskUseCase {
         Toast.makeText(application.getApplicationContext(), "Расписание загружено", Toast.LENGTH_LONG).show();
     }
 
-    public void clearNotification() {
-        notificationId.postValue(null);
+    public void setFilterTaskTag(Integer pos) {
+        filterTaskTag.postValue(pos);
+    }
+    public void setFilterTaskUrgency(Integer pos) {
+        filterTaskUrgency.postValue(pos);
+    }
+    public void setFilterTaskShifting(Integer pos) {
+        filterTaskShifting.postValue(pos);
+    }
+    public void setFilterCalendar(Long date) {
+        filterCalendar.postValue(date);
     }
 
-    public static long timeConversion(String time) {
+    private static long timeConversion(String time) {
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss", Locale.ENGLISH);
         long unixTime = 0;
-        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+3:00")); //Specify your timezone
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+3:00"));
         try {
-            unixTime = dateFormat.parse(time).getTime();
+            unixTime = Objects.requireNonNull(dateFormat.parse(time)).getTime();
         } catch (ParseException e) {
             e.printStackTrace();
         }
