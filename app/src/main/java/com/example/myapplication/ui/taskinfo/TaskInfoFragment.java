@@ -34,7 +34,15 @@ public class TaskInfoFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        assert getArguments() != null;
+        int id = getArguments().getInt("id");
         binding.delete.setVisibility(View.VISIBLE);
+        binding.delete.setOnClickListener(
+                view1 -> {
+                    tasksViewModel.deleteTask(id);
+                    Navigation.findNavController(view1).popBackStack();
+                }
+        );
         binding.exitButton.setOnClickListener(
                 view1 -> {
                     tasksViewModel.refresh();
@@ -43,7 +51,7 @@ public class TaskInfoFragment extends Fragment {
         );
         binding.saveText.setOnClickListener(
                 view1 -> {
-                    int response = tasksViewModel.insertTask();
+                    int response = tasksViewModel.updateTask(id);
                     if (response == 0) {
                         Toast.makeText(getContext(), "Введите название события", Toast.LENGTH_LONG).show();
                     } else if (response == 2) {
@@ -132,7 +140,6 @@ public class TaskInfoFragment extends Fragment {
         binding.pickerEnd.setOnTimeChangedListener(
                 (v, h, m) -> tasksViewModel.setTaskEnd(h * 3600000L + m * 60000L)
         );
-        assert getArguments() != null;
         binding.editName.setText(getArguments().getString("name"));
         binding.editDescription.setText(getArguments().getString("description"));
         binding.calendar.setDate(getArguments().getLong("date"));

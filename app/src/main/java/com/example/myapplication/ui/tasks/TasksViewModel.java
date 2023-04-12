@@ -150,6 +150,31 @@ public class TasksViewModel extends AndroidViewModel {
             return 2;
         }
     }
+    public int updateTask(int id) {
+        long cur = Calendar.getInstance().getTimeInMillis();
+        long start = taskStart.getValue() + taskDate.getValue();
+        long end = taskEnd.getValue() + taskDate.getValue();
+        String name = taskName.getValue();
+        if (name.isEmpty()) {
+            return 0;
+        } else if (cur <= start && start <= end) {
+            useCase.updateTask(
+                    id,
+                    name,
+                    taskDescription.getValue(),
+                    start,
+                    end,
+                    taskType.getValue(),
+                    taskUrgency.getValue(),
+                    taskShifting.getValue());
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+    public void deleteTask(int id) {
+        useCase.deleteTask(id);
+    }
     public void refresh() {
         useCase.refresh();
     }

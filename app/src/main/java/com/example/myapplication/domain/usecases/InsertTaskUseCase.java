@@ -121,6 +121,12 @@ public class InsertTaskUseCase {
     public void insertTask(String name, String description, Long startTime, Long finishTime, int type, int urgency, int shifting) {
         repository.insertTask(name, description, startTime, finishTime, type, urgency, shifting);
     }
+    public void updateTask(int id, String name, String description, Long startTime, Long finishTime, int type, int urgency, int shifting) {
+        repository.updateTask(id, name, description, startTime, finishTime, type, urgency, shifting);
+    }
+    public void deleteTask(int id) {
+        repository.deleteTask(id);
+    }
 
     public LiveData<List<TaskDomain>> getEduTasks() {
         return eduTasks;

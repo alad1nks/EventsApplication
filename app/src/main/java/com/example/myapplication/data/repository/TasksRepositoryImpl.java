@@ -38,4 +38,17 @@ public class TasksRepositoryImpl {
             );
         });
     }
+
+    public void updateTask(int id, String name, String description, Long startTime, Long finishTime, int type, int urgency, int shifting) {
+        TasksDatabase.databaseWriteExecutor.execute(() -> {
+            tasksDao.updateTask(
+                    id, name, description, startTime, finishTime, type, urgency, shifting);
+        });
+    }
+
+    public void deleteTask(int id) {
+        TasksDatabase.databaseWriteExecutor.execute(() -> {
+            tasksDao.deleteTask(id);
+        });
+    }
 }
