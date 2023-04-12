@@ -141,6 +141,18 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp"
+            android:layout_gravity="center"
+            android:text="Удалить событие"
+            android:textSize="24dp"
+            android:textColor="#FF3B30"
+            android:visibility="gone"/>
     </LinearLayout>
 
 </ScrollView>

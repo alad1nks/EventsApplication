@@ -61,10 +61,11 @@ public class ProfileFragment extends Fragment {
 
                         assert intent1 != null;
                         Uri uri = intent1.getData();
-
-                        byte[] byteData = getBytes(requireActivity(), uri);
-
-                        tasksViewModel.uploadTasks(new String(byteData));
+                        if (uri.getPath().endsWith("ics")) {
+                            byte[] byteData = getBytes(requireActivity(), uri);
+                            tasksViewModel.uploadTasks(new String(byteData));
+                        } else {
+                            Toast.makeText(requireActivity(), "Некорректный формат файла", Toast.LENGTH_LONG).show();                        }
 
                     }
                 });

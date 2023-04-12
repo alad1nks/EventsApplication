@@ -186,9 +186,14 @@ public class TasksViewModel extends AndroidViewModel {
                 urgency = R.drawable.ic_high_priority;
             }
             shifting = R.drawable.empty;
+            Long date = t.getStartTime() - (t.getStartTime() + 10800000) % 86400000;
+            Integer startMinute = Math.toIntExact((((t.getStartTime() / 1000 + 10800) % 86400) / 60) % 60);
+            Integer startHour = Math.toIntExact(((((t.getStartTime() / 1000 + 10800) % 86400) / 60) - startMinute) / 60);
+            Integer finishMinute = Math.toIntExact((((t.getFinishTime() / 1000 + 10800) % 86400) / 60) % 60);
+            Integer finishHour = Math.toIntExact(((((t.getFinishTime() / 1000 + 10800) % 86400) / 60) - finishMinute) / 60);
             ans.add(
                     new TaskUi(
-                            t.getId(), t.getName(), t.getDescription(), tag, urgency, shifting
+                            t.getId(), t.getName(), t.getDescription(), date, startHour, startMinute, finishHour, finishMinute, t.getType(), t.getUrgency(), t.getShifting(), tag, urgency, shifting
                     )
             );
         }

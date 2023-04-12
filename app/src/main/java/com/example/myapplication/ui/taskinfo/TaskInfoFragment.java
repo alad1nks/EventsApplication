@@ -1,9 +1,8 @@
-package com.example.myapplication.ui.addtask;
+package com.example.myapplication.ui.taskinfo;
 
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,7 @@ import com.example.myapplication.ui.tasks.TasksViewModel;
 
 import java.util.GregorianCalendar;
 
-public class AddTaskFragment extends Fragment {
+public class TaskInfoFragment extends Fragment {
     private FragmentAddTaskBinding binding;
     private TasksViewModel tasksViewModel;
 
@@ -35,6 +34,7 @@ public class AddTaskFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        binding.delete.setVisibility(View.VISIBLE);
         binding.exitButton.setOnClickListener(
                 view1 -> {
                     tasksViewModel.refresh();
@@ -135,9 +135,13 @@ public class AddTaskFragment extends Fragment {
         assert getArguments() != null;
         binding.editName.setText(getArguments().getString("name"));
         binding.editDescription.setText(getArguments().getString("description"));
-        tasksViewModel.setTaskDate(binding.calendar.getDate() - (binding.calendar.getDate() + 10800000) % 86400000);
-        tasksViewModel.setTaskStart(binding.pickerStart.getHour() * 3600000L + binding.pickerStart.getMinute() * 60000L);
-        tasksViewModel.setTaskEnd(binding.pickerEnd.getHour() * 3600000L + binding.pickerEnd.getMinute() * 60000L);
+        binding.calendar.setDate(getArguments().getLong("date"));
+        binding.pickerStart.setHour(getArguments().getInt("startHour"));
+        binding.pickerStart.setMinute(getArguments().getInt("startMinute"));
+        binding.pickerEnd.setHour(getArguments().getInt("finishHour"));
+        binding.pickerEnd.setMinute(getArguments().getInt("finishMinute"));
+        binding.spinnerType.setSelection(getArguments().getInt("type"));
+        binding.spinnerUrgency.setSelection(getArguments().getInt("urgency"));
+        binding.spinnerShifting.setSelection(getArguments().getInt("shifting"));
     }
-
 }

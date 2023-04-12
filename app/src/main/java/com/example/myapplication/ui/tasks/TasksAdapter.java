@@ -2,6 +2,7 @@ package com.example.myapplication.ui.tasks;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,19 +39,37 @@ public class TasksAdapter extends ListAdapter<TaskUi, TasksAdapter.TasksViewHold
 
     @Override
     public void onBindViewHolder(@NonNull TasksViewHolder holder, int position) {
+        Integer id = getItem(position).getId();
         String name = getItem(position).getName();
         String description = getItem(position).getDescription();
+        Long date = getItem(position).getDate();
+        Integer type = getItem(position).getTypePos();
+        Integer urgency = getItem(position).getUrgencyPos();
+        Integer shifting = getItem(position).getShiftingPos();
+        Integer startHour = getItem(position).getStartHour();
+        Integer startMinute = getItem(position).getStartMinute();
+        Integer finishHour = getItem(position).getFinishHour();
+        Integer finishMinute = getItem(position).getFinishMinute();
         holder.bind(getItem(position));
         holder.binding.info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
+                bundle.putInt("id", id);
                 bundle.putString("name", name);
                 bundle.putString("description", description);
+                bundle.putLong("date", date);
+                bundle.putInt("startHour", startHour);
+                bundle.putInt("startMinute", startMinute);
+                bundle.putInt("finishHour", finishHour);
+                bundle.putInt("finishMinute", finishMinute);
+                bundle.putInt("type", type);
+                bundle.putInt("urgency", urgency);
+                bundle.putInt("shifting", shifting);
                 Navigation
                         .findNavController(activity, R.id.nav_host_fragment_activity_main)
                         .navigate(
-                                R.id.action_navigation_main_to_navigation_add_task,
+                                R.id.action_navigation_main_to_navigation_task_info,
                                 bundle,
                                 new NavOptions.Builder()
                                         .setEnterAnim(androidx.appcompat.R.anim.abc_slide_in_bottom)

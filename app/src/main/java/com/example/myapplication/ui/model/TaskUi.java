@@ -9,14 +9,30 @@ public final class TaskUi{
     private final int id;
     private final String name;
     private final String description;
+    private final Long date;
+    private final Integer startHour;
+    private final Integer startMinute;
+    private final Integer finishHour;
+    private final Integer finishMinute;
+    private final int typePos;
+    private final int urgencyPos;
+    private final int shiftingPos;
     private final int tag;
     private final int urgency;
     private final int shifting;
 
-    public TaskUi(int id, String name, String description, int tag, int urgency, int shifting) {
+    public TaskUi(int id, String name, String description, Long date, Integer startHour, Integer startMinute, Integer finishHour, Integer finishMinute, int typePos, int urgencyPos, int shiftingPos, int tag, int urgency, int shifting) {
         this.id = id;
-        this.description = description;
         this.name = name;
+        this.description = description;
+        this.date = date;
+        this.startHour = startHour;
+        this.startMinute = startMinute;
+        this.finishHour = finishHour;
+        this.finishMinute = finishMinute;
+        this.typePos = typePos;
+        this.urgencyPos = urgencyPos;
+        this.shiftingPos = shiftingPos;
         this.tag = tag;
         this.urgency = urgency;
         this.shifting = shifting;
@@ -30,6 +46,30 @@ public final class TaskUi{
     }
     public String getDescription() {
         return description;
+    }
+    public Long getDate() {
+        return date;
+    }
+    public Integer getStartHour() {
+        return startHour;
+    }
+    public Integer getStartMinute() {
+        return startMinute;
+    }
+    public Integer getFinishHour() {
+        return finishHour;
+    }
+    public Integer getFinishMinute() {
+        return finishMinute;
+    }
+    public int getTypePos() {
+        return typePos;
+    }
+    public int getUrgencyPos() {
+        return urgencyPos;
+    }
+    public int getShiftingPos() {
+        return shiftingPos;
     }
     @DrawableRes public int getTag() {
         return tag;
