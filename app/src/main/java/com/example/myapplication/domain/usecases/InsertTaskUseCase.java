@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.os.Environment;
 import android.util.Log;
+import android.util.Pair;
 import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
@@ -34,7 +35,7 @@ public class InsertTaskUseCase {
     private final MediatorLiveData<List<TaskDomain>> workTasks;
     private final LiveData<List<TaskData>> eduTasksFromDatabase;
     private final LiveData<List<TaskData>> workTasksFromDatabase;
-    private final MutableLiveData<Integer> notificationId;
+    private final MutableLiveData<Pair<String, Integer>> notification;
     private final MutableLiveData<Integer> filterTaskTag;
     private final MutableLiveData<Integer> filterTaskUrgency;
     private final MutableLiveData<Integer> filterTaskShifting;
@@ -43,7 +44,7 @@ public class InsertTaskUseCase {
     public InsertTaskUseCase(Application application) {
         this.application = application;
         long time = Calendar.getInstance().getTimeInMillis();
-        notificationId = new MutableLiveData<>();
+        notification = new MutableLiveData<>();
         filterTaskTag = new MutableLiveData<>(0);
         filterTaskUrgency = new MutableLiveData<>(0);
         filterTaskShifting = new MutableLiveData<>(0);
@@ -95,7 +96,7 @@ public class InsertTaskUseCase {
             if (now <= start) {
                 tag = 0;
                 if (start - now > 290000 && start - now < 310000) {
-                    notificationId.postValue(i.getId());
+                    notification.postValue(Pair.create(i.getName(), i.getId()));
                 }
             } else if (now <= finish) {
                 tag = 1;
@@ -118,11 +119,61 @@ public class InsertTaskUseCase {
         return result1;
     }
 
-    public void insertTask(String name, String description, Long startTime, Long finishTime, int type, int urgency, int shifting) {
+    public String insertTask(String name, String description, Long startTime, Long finishTime, int type, int urgency, int shifting) {
+        if (type == 0) {
+            if (eduTasks.getValue() != null) {
+                List<TaskDomain> edu = eduTasks.getValue();
+                for (TaskDomain i : edu) {
+                    Long start = i.getStartTime();
+                    Long finish = i.getFinishTime();
+                    if ((startTime <= start && finishTime >= start) || (startTime >= start && startTime <= finish)) {
+                        return i.getName();
+                    }
+                }
+            }
+
+        } else {
+            if (workTasks.getValue() != null) {
+                List<TaskDomain> work = workTasks.getValue();
+                for (TaskDomain i : work) {
+                    Long start = i.getStartTime();
+                    Long finish = i.getFinishTime();
+                    if ((startTime <= start && finishTime >= start) || (startTime >= start && startTime <= finish)) {
+                        return i.getName();
+                    }
+                }
+            }
+        }
         repository.insertTask(name, description, startTime, finishTime, type, urgency, shifting);
+        return "1";
     }
-    public void updateTask(int id, String name, String description, Long startTime, Long finishTime, int type, int urgency, int shifting) {
+    public String updateTask(int id, String name, String description, Long startTime, Long finishTime, int type, int urgency, int shifting) {
+        if (type == 0) {
+            if (eduTasks.getValue() != null) {
+                List<TaskDomain> edu = eduTasks.getValue();
+                for (TaskDomain i : edu) {
+                    Long start = i.getStartTime();
+                    Long finish = i.getFinishTime();
+                    if ((startTime <= start && finishTime >= start) || (startTime >= start && startTime <= finish)) {
+                        return i.getName();
+                    }
+                }
+            }
+
+        } else {
+            if (workTasks.getValue() != null) {
+                List<TaskDomain> work = workTasks.getValue();
+                for (TaskDomain i : work) {
+                    Long start = i.getStartTime();
+                    Long finish = i.getFinishTime();
+                    if ((startTime <= start && finishTime >= start) || (startTime >= start && startTime <= finish)) {
+                        return i.getName();
+                    }
+                }
+            }
+        }
         repository.updateTask(id, name, description, startTime, finishTime, type, urgency, shifting);
+        return "1";
     }
     public void deleteTask(int id) {
         repository.deleteTask(id);
@@ -135,8 +186,8 @@ public class InsertTaskUseCase {
     public LiveData<List<TaskDomain>> getWorkTasks() {
         return workTasks;
     }
-    public LiveData<Integer> getNotificationId() {
-        return notificationId;
+    public LiveData<Pair<String, Integer>> getNotification() {
+        return notification;
     }
 
     public void refresh() {
@@ -147,7 +198,7 @@ public class InsertTaskUseCase {
     }
 
     public void clearNotification() {
-        notificationId.postValue(null);
+        notification.postValue(null);
     }
 
     @SuppressLint("SimpleDateFormat")

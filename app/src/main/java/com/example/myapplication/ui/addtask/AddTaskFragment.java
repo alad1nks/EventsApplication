@@ -3,7 +3,6 @@ package com.example.myapplication.ui.addtask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +19,7 @@ import com.example.myapplication.databinding.FragmentAddTaskBinding;
 import com.example.myapplication.ui.tasks.TasksViewModel;
 
 import java.util.GregorianCalendar;
+import java.util.Objects;
 
 public class AddTaskFragment extends Fragment {
     private FragmentAddTaskBinding binding;
@@ -43,13 +43,15 @@ public class AddTaskFragment extends Fragment {
         );
         binding.saveText.setOnClickListener(
                 view1 -> {
-                    int response = tasksViewModel.insertTask();
-                    if (response == 0) {
+                    String response = tasksViewModel.insertTask();
+                    if (Objects.equals(response, "0")) {
                         Toast.makeText(getContext(), "Введите название события", Toast.LENGTH_LONG).show();
-                    } else if (response == 2) {
-                        Toast.makeText(getContext(), "Некорректная дата", Toast.LENGTH_LONG).show();
-                    } else {
+                    } else if (Objects.equals(response, "2")) {
+                        Toast.makeText(getContext(), "Некорректный выбор времени", Toast.LENGTH_LONG).show();
+                    } else if (Objects.equals(response, "1")) {
                         Navigation.findNavController(view1).popBackStack();
+                    } else {
+                        Toast.makeText(getContext(), "Перечечение по времени с cобытием " + response, Toast.LENGTH_LONG).show();
                     }
                 }
         );
@@ -139,5 +141,4 @@ public class AddTaskFragment extends Fragment {
         tasksViewModel.setTaskStart(binding.pickerStart.getHour() * 3600000L + binding.pickerStart.getMinute() * 60000L);
         tasksViewModel.setTaskEnd(binding.pickerEnd.getHour() * 3600000L + binding.pickerEnd.getMinute() * 60000L);
     }
-
 }

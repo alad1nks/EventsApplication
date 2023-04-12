@@ -2,6 +2,7 @@ package com.example.myapplication.ui.tasks;
 
 import android.app.Application;
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -16,6 +17,7 @@ import com.example.myapplication.ui.model.TaskUi;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 public class TasksViewModel extends AndroidViewModel {
     private final InsertTaskUseCase useCase;
@@ -33,7 +35,7 @@ public class TasksViewModel extends AndroidViewModel {
     private final MutableLiveData<Integer> filterTaskUrgency;
     private final MutableLiveData<Integer> filterTaskShifting;
     private final MutableLiveData<Long> filterCalendar;
-    private final LiveData<Integer> notificationId;
+    private final LiveData<Pair<String, Integer>> notification;
 
     public TasksViewModel(Application application) {
         super(application);
@@ -57,7 +59,7 @@ public class TasksViewModel extends AndroidViewModel {
         filterTaskUrgency = new MutableLiveData<>(0);
         filterTaskShifting = new MutableLiveData<>(0);
         filterCalendar = new MutableLiveData<>(time - (time + 10800000) % 86400000);
-        notificationId = useCase.getNotificationId();
+        notification = useCase.getNotification();
     }
 
     public LiveData<List<TaskUi>> getEduTasks() {
@@ -66,8 +68,8 @@ public class TasksViewModel extends AndroidViewModel {
     public LiveData<List<TaskUi>> getWorkTasks() {
         return workTasks;
     }
-    public LiveData<Integer> getNotificationId() {
-        return notificationId;
+    public LiveData<Pair<String, Integer>> getNotification() {
+        return notification;
     }
     public LiveData<Integer> getFilterTaskTag() {
         return filterTaskTag;
@@ -129,15 +131,15 @@ public class TasksViewModel extends AndroidViewModel {
         useCase.setFilterCalendar(filterCalendar.getValue());
     }
 
-    public int insertTask() {
+    public String insertTask() {
         long cur = Calendar.getInstance().getTimeInMillis();
         long start = taskStart.getValue() + taskDate.getValue();
         long end = taskEnd.getValue() + taskDate.getValue();
         String name = taskName.getValue();
         if (name.isEmpty()) {
-            return 0;
+            return "0";
         } else if (cur <= start && start <= end) {
-            useCase.insertTask(
+            String response = useCase.insertTask(
                     name,
                     taskDescription.getValue(),
                     start,
@@ -145,20 +147,36 @@ public class TasksViewModel extends AndroidViewModel {
                     taskType.getValue(),
                     taskUrgency.getValue(),
                     taskShifting.getValue());
-            return 1;
+            if (Objects.equals(response, "true")) {
+                return "1";
+            }
+            return response;
+        } else if (start > end) {
+            String response = useCase.insertTask(
+                    name,
+                    taskDescription.getValue(),
+                    start,
+                    start,
+                    taskType.getValue(),
+                    taskUrgency.getValue(),
+                    taskShifting.getValue());
+            if (Objects.equals(response, "true")) {
+                return "1";
+            }
+            return response;
         } else {
-            return 2;
+            return "2";
         }
     }
-    public int updateTask(int id) {
+    public String updateTask(int id) {
         long cur = Calendar.getInstance().getTimeInMillis();
         long start = taskStart.getValue() + taskDate.getValue();
         long end = taskEnd.getValue() + taskDate.getValue();
         String name = taskName.getValue();
         if (name.isEmpty()) {
-            return 0;
+            return "0";
         } else if (cur <= start && start <= end) {
-            useCase.updateTask(
+            return useCase.updateTask(
                     id,
                     name,
                     taskDescription.getValue(),
@@ -167,9 +185,18 @@ public class TasksViewModel extends AndroidViewModel {
                     taskType.getValue(),
                     taskUrgency.getValue(),
                     taskShifting.getValue());
-            return 1;
+        } else if (start > end) {
+            return useCase.updateTask(
+                    id,
+                    name,
+                    taskDescription.getValue(),
+                    start,
+                    start,
+                    taskType.getValue(),
+                    taskUrgency.getValue(),
+                    taskShifting.getValue());
         } else {
-            return 2;
+            return "2";
         }
     }
     public void deleteTask(int id) {

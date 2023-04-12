@@ -107,12 +107,11 @@ public class TasksFragment extends Fragment {
         mBuilder.setContentIntent(pendingIntent);
         mBuilder.setSmallIcon(R.mipmap.ic_launcher_round);
         mBuilder.setContentTitle("Новое событие");
-        mBuilder.setContentText("Запланированное событие через 5 минут!");
         mBuilder.setStyle(bigText);
 
         mNotificationManager =
                 (NotificationManager) requireActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-        String channelId = "Your_channel_id";
+        String channelId = "channel_id";
         NotificationChannel channel = new NotificationChannel(
                 channelId,
                 "Channel human readable title",
@@ -120,9 +119,10 @@ public class TasksFragment extends Fragment {
         mNotificationManager.createNotificationChannel(channel);
         mBuilder.setChannelId(channelId);
 
-        tasksViewModel.getNotificationId().observe(getViewLifecycleOwner(), notificationId -> {
-            if (notificationId != null) {
-                mNotificationManager.notify(notificationId, mBuilder.build());
+        tasksViewModel.getNotification().observe(getViewLifecycleOwner(), notification -> {
+            if (notification != null) {
+                mBuilder.setContentText("Через 5 минут начнётся " + notification.first);
+                mNotificationManager.notify(notification.second, mBuilder.build());
             }
             tasksViewModel.clearNotification();
         });
