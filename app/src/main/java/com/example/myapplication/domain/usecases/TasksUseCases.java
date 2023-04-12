@@ -12,7 +12,7 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.data.model.TaskData;
-import com.example.myapplication.data.repository.TasksRepositoryImpl;
+import com.example.myapplication.data.repository.TasksRepository;
 import com.example.myapplication.domain.model.TaskDomain;
 
 import java.io.File;
@@ -29,8 +29,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
 
-public class InsertTaskUseCase {
-    private final TasksRepositoryImpl repository;
+public class TasksUseCases {
+    private final TasksRepository repository;
     private final MediatorLiveData<List<TaskDomain>> eduTasks;
     private final MediatorLiveData<List<TaskDomain>> workTasks;
     private final LiveData<List<TaskData>> eduTasksFromDatabase;
@@ -41,7 +41,7 @@ public class InsertTaskUseCase {
     private final MutableLiveData<Integer> filterTaskShifting;
     private final MutableLiveData<Long> filterCalendar;
     private final Application application;
-    public InsertTaskUseCase(Application application) {
+    public TasksUseCases(Application application) {
         this.application = application;
         long time = Calendar.getInstance().getTimeInMillis();
         notification = new MutableLiveData<>();
@@ -49,7 +49,7 @@ public class InsertTaskUseCase {
         filterTaskUrgency = new MutableLiveData<>(0);
         filterTaskShifting = new MutableLiveData<>(0);
         filterCalendar = new MutableLiveData<>(time - (time + 10800000) % 86400000);
-        repository = new TasksRepositoryImpl(application);
+        repository = new TasksRepository(application);
         eduTasksFromDatabase = repository.getEduTasks();
         eduTasks = new MediatorLiveData<>();
         workTasksFromDatabase = repository.getWorkTasks();
@@ -154,7 +154,7 @@ public class InsertTaskUseCase {
                 for (TaskDomain i : edu) {
                     Long start = i.getStartTime();
                     Long finish = i.getFinishTime();
-                    if ((startTime <= start && finishTime >= start) || (startTime >= start && startTime <= finish)) {
+                    if (((startTime <= start && finishTime >= start) || (startTime >= start && startTime <= finish)) && i.getId() != id) {
                         return i.getName();
                     }
                 }
@@ -166,7 +166,7 @@ public class InsertTaskUseCase {
                 for (TaskDomain i : work) {
                     Long start = i.getStartTime();
                     Long finish = i.getFinishTime();
-                    if ((startTime <= start && finishTime >= start) || (startTime >= start && startTime <= finish)) {
+                    if (((startTime <= start && finishTime >= start) || (startTime >= start && startTime <= finish)) && i.getId() != id) {
                         return i.getName();
                     }
                 }

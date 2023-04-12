@@ -27,11 +27,6 @@ public class AppPreferenceImpl implements AppPreference {
     }
 
     @Override
-    public void logOut() {
-        editor.putBoolean("loggedIn", false).apply();
-    }
-
-    @Override
     public void saveName(String name) {
         editor.putString("name", name).apply();
     }

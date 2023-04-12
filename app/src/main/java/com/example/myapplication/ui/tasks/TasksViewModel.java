@@ -11,7 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.R;
 import com.example.myapplication.domain.model.TaskDomain;
-import com.example.myapplication.domain.usecases.InsertTaskUseCase;
+import com.example.myapplication.domain.usecases.TasksUseCases;
 import com.example.myapplication.ui.model.TaskUi;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class TasksViewModel extends AndroidViewModel {
-    private final InsertTaskUseCase useCase;
+    private final TasksUseCases useCase;
     private final MediatorLiveData<List<TaskUi>> eduTasks;
     private final MediatorLiveData<List<TaskUi>> workTasks;
     private final MutableLiveData<String> taskName;
@@ -40,7 +40,7 @@ public class TasksViewModel extends AndroidViewModel {
     public TasksViewModel(Application application) {
         super(application);
         long time = Calendar.getInstance().getTimeInMillis();
-        useCase = new InsertTaskUseCase(application);
+        useCase = new TasksUseCases(application);
         LiveData<List<TaskDomain>> eduTasksFromDomain = useCase.getEduTasks();
         LiveData<List<TaskDomain>> workTasksFromDomain = useCase.getWorkTasks();
         eduTasks = new MediatorLiveData<>();
