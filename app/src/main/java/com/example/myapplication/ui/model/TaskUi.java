@@ -89,6 +89,11 @@ public final class TaskUi{
         return id == taskUi.id
                 && Objects.equals(name, taskUi.name)
                 && Objects.equals(description, taskUi.description)
+                && Objects.equals(date, taskUi.date)
+                && Objects.equals(startHour, taskUi.startHour)
+                && Objects.equals(startMinute, taskUi.startMinute)
+                && Objects.equals(finishHour, taskUi.finishHour)
+                && Objects.equals(finishMinute, taskUi.finishMinute)
                 && Objects.equals(tag, taskUi.tag)
                 && Objects.equals(urgency, taskUi.urgency)
                 && Objects.equals(shifting, taskUi.shifting);
@@ -96,7 +101,7 @@ public final class TaskUi{
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, tag, urgency, shifting);
+        return Objects.hash(id, name, description, date, startHour, startMinute, finishHour, finishMinute, tag, urgency, shifting);
     }
 
     @NonNull

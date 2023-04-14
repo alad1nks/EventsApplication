@@ -151,19 +151,6 @@ public class TasksViewModel extends AndroidViewModel {
                 return "1";
             }
             return response;
-        } else if (start > end) {
-            String response = useCase.insertTask(
-                    name,
-                    taskDescription.getValue(),
-                    start,
-                    start,
-                    taskType.getValue(),
-                    taskUrgency.getValue(),
-                    taskShifting.getValue());
-            if (Objects.equals(response, "true")) {
-                return "1";
-            }
-            return response;
         } else {
             return "2";
         }
@@ -185,17 +172,7 @@ public class TasksViewModel extends AndroidViewModel {
                     taskType.getValue(),
                     taskUrgency.getValue(),
                     taskShifting.getValue());
-        } else if (start > end) {
-            return useCase.updateTask(
-                    id,
-                    name,
-                    taskDescription.getValue(),
-                    start,
-                    start,
-                    taskType.getValue(),
-                    taskUrgency.getValue(),
-                    taskShifting.getValue());
-        } else {
+        }  else {
             return "2";
         }
     }

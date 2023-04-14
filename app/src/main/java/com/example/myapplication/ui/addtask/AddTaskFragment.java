@@ -137,7 +137,12 @@ public class AddTaskFragment extends Fragment {
         assert getArguments() != null;
         binding.editName.setText(getArguments().getString("name"));
         binding.editDescription.setText(getArguments().getString("description"));
-        tasksViewModel.setTaskDate(binding.calendar.getDate() - (binding.calendar.getDate() + 10800000) % 86400000);
+        if (tasksViewModel.getFilterCalendar() != null) {
+            tasksViewModel.setTaskDate(tasksViewModel.getFilterCalendar().getValue());
+            binding.calendar.setDate(tasksViewModel.getFilterCalendar().getValue());
+        } else {
+            tasksViewModel.setTaskDate(binding.calendar.getDate() - (binding.calendar.getDate() + 10800000) % 86400000);
+        }
         tasksViewModel.setTaskStart(binding.pickerStart.getHour() * 3600000L + binding.pickerStart.getMinute() * 60000L);
         tasksViewModel.setTaskEnd(binding.pickerEnd.getHour() * 3600000L + binding.pickerEnd.getMinute() * 60000L);
     }

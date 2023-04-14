@@ -59,6 +59,7 @@ public class TaskInfoFragment extends Fragment {
                         Toast.makeText(getContext(), "Некорректный выбор времени", Toast.LENGTH_LONG).show();
                     } else if (Objects.equals(response, "1")) {
                         Navigation.findNavController(view1).popBackStack();
+                        tasksViewModel.refresh();
                     } else {
                         Toast.makeText(getContext(), "Перечечение по времени с cобытием " + response, Toast.LENGTH_LONG).show();
                     }
@@ -146,6 +147,7 @@ public class TaskInfoFragment extends Fragment {
         binding.editName.setText(getArguments().getString("name"));
         binding.editDescription.setText(getArguments().getString("description"));
         binding.calendar.setDate(getArguments().getLong("date"));
+        tasksViewModel.setTaskDate(getArguments().getLong("date"));
         binding.pickerStart.setHour(getArguments().getInt("startHour"));
         binding.pickerStart.setMinute(getArguments().getInt("startMinute"));
         binding.pickerEnd.setHour(getArguments().getInt("finishHour"));
