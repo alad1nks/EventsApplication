@@ -105,13 +105,17 @@ public class TasksUseCases {
             }
             if ((start >= date && start <= date + 86400000) && (filterTag - 1 == tag || filterTag == 0) && (filterUrgency - 1 == urgency || filterUrgency == 0) && (filterShifting - 1 == shifting || filterShifting == 0)) {
                 if (now <= finish) {
-                    result1.add(new TaskDomain(
-                            i.getId(), i.getName(), i.getDescription(), start, finish, tag, i.getType(), i.getUrgency(), i.getShifting()
-                    ));
+                    result1.add(
+                            new TaskDomain(
+                                    i.getId(), i.getName(), i.getDescription(), start, finish, tag, i.getType(), i.getUrgency(), i.getShifting()
+                            )
+                    );
                 } else {
-                    result2.add(new TaskDomain(
-                            i.getId(), i.getName(), i.getDescription(), start, finish, tag, i.getType(), i.getUrgency(), i.getShifting()
-                    ));
+                    result2.add(
+                            new TaskDomain(
+                                    i.getId(), i.getName(), i.getDescription(), start, finish, tag, i.getType(), i.getUrgency(), i.getShifting()
+                            )
+                    );
                 }
             }
         }
@@ -159,7 +163,6 @@ public class TasksUseCases {
                     }
                 }
             }
-
         } else {
             if (workTasks.getValue() != null) {
                 List<TaskDomain> work = workTasks.getValue();
@@ -204,11 +207,22 @@ public class TasksUseCases {
     @SuppressLint("SimpleDateFormat")
     public void saveTasks() {
         StringBuilder response = new StringBuilder();
-        if (eduTasks.getValue() != null) {
-            for (TaskDomain i : eduTasks.getValue()) {
+        if (repository.getEduTasks().getValue() != null) {
+            for (TaskData i : repository.getEduTasks().getValue()) {
                 response.append("DTSTART:").append(new SimpleDateFormat("yyyyMMdd").format(new Date(i.getStartTime()))).append("T").append(new SimpleDateFormat("hhmmss").format(new Date(i.getStartTime())))
-                        .append("\nDTEND:").append(new SimpleDateFormat("yyyyMMdd").format(new Date(i.getFinishTime()))).append("T").append(new SimpleDateFormat("hhmmss").format(new Date(i.getStartTime())))
+                        .append("\nDTEND:").append(new SimpleDateFormat("yyyyMMdd").format(new Date(i.getFinishTime()))).append("T").append(new SimpleDateFormat("hhmmss").format(new Date(i.getFinishTime())))
                         .append("\nSUMMARY:").append(i.getName())
+                        .append("\nTAG:").append("0")
+                        .append("\nDESCRIPTION:").append(i.getDescription()).append("\n");
+            }
+        }
+        if (repository.getWorkTasks().getValue() != null) {
+            Log.d("sgdsg", "dgsd");
+            for (TaskData i : repository.getWorkTasks().getValue()) {
+                response.append("DTSTART:").append(new SimpleDateFormat("yyyyMMdd").format(new Date(i.getStartTime()))).append("T").append(new SimpleDateFormat("hhmmss").format(new Date(i.getStartTime())))
+                        .append("\nDTEND:").append(new SimpleDateFormat("yyyyMMdd").format(new Date(i.getFinishTime()))).append("T").append(new SimpleDateFormat("hhmmss").format(new Date(i.getFinishTime())))
+                        .append("\nSUMMARY:").append(i.getName())
+                        .append("\nTAG:").append("1")
                         .append("\nDESCRIPTION:").append(i.getDescription()).append("\n");
             }
         }
@@ -228,9 +242,10 @@ public class TasksUseCases {
 
     public void uploadTasks(String file) {
         String name = null;
-        String description = null;
         Long startTime = null;
         Long finishTime = null;
+        String tag = null;
+        String description = null;
         for(String i : file.split("\n")) {
             Log.d("uploadTasks", i);
             if (i.contains("DTSTART:")) {
@@ -253,19 +268,22 @@ public class TasksUseCases {
                 finishTime = timeConversion(syears+smonth+sdays+shours+sminutes+sseconds);
             } else if (i.contains("SUMMARY:")) {
                 name = i.substring(8);
+            } else if (i.contains("TAG:")) {
+                tag = i.substring(4);
             } else if (i.contains("DESCRIPTION:")) {
-                description = i.substring(12);
+                description = "";
             }
-            if (name != null && startTime != null && finishTime != null) {
-                if (description != null) {
-                    repository.insertTask(name, description, startTime, finishTime, 0, 0, 0);
+            if (name != null && startTime != null && finishTime != null && description != null) {
+                if (tag != null) {
+                    repository.insertTask(name, description, startTime, finishTime, Integer.parseInt(tag), 0, 0);
+                    tag = null;
                 } else {
-                    repository.insertTask(name, "", startTime, finishTime, 0, 0, 0);
+                    repository.insertTask(name, description, startTime, finishTime, 0, 0, 0);
                 }
                 name = null;
-                description = null;
                 startTime = null;
                 finishTime = null;
+                description = null;
             }
         }
         Toast.makeText(application.getApplicationContext(), "Расписание загружено", Toast.LENGTH_LONG).show();
